@@ -1,53 +1,79 @@
-name: my-first-work-flow
+name: Scheduled Multi-Job Workflow
 
-# To trigger on every push in this repo on any branch
+# Workflow Triggers
 on:
-   schedule:
-      - cron: "*/1 * * * *"
+  push:
+
+  schedule:
+    # Runs every 1 minute
+    - cron: "*/1 * * * *"
 
 jobs:
-  job1:
-    name: JOB1
+
+  # -----------------------------------------
+  # JOB 1
+  # -----------------------------------------
+  system-info:
+    name: System Information Job
     runs-on: ubuntu-latest
 
     steps:
-      - name: Running single command in Job1
-        run: echo "This is my first github workflow"
+      - name: Print Welcome Message
+        run: echo "This is my first GitHub Actions workflow"
 
-      - name: Checking OS release of Github runner
+      - name: Display OS Release Information
         run: cat /etc/os-release
 
-      - name: Calling sleep
+      - name: Wait for 20 Seconds
         run: sleep 20
 
-  job2:
-    name: JOB2
+  # -----------------------------------------
+  # JOB 2
+  # -----------------------------------------
+  hostname-check:
+    name: Hostname and Time Check
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checking the Hostname of the Runner
+      - name: Display Runner Hostname
         run: hostname
 
-      - name: Running multiple commands
+      - name: Execute Multiple Commands
         run: |
           echo "Hi, This is Jhalsa"
-          echo "Current time is `date`"
+          echo "Current Time: $(date)"
           sleep 20
 
-  job3:
-    name: JOB3
-    needs: job1
+  # -----------------------------------------
+  # JOB 3
+  # Depends on JOB 1
+  # -----------------------------------------
+  dependency-check:
+    name: Single Dependency Job
+    needs: system-info
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checking single dependency
-        run: sleep 10
+      - name: Verify Dependency Execution
+        run: |
+          echo "JOB1 completed successfully"
+          sleep 10
 
-  job4:
-    name: JOB4
-    needs: [job1, job2, job3]
+  # -----------------------------------------
+  # JOB 4
+  # Depends on JOB 1, JOB 2, and JOB 3
+  # -----------------------------------------
+  final-job:
+    name: Multiple Dependency Job
+    needs:
+      - system-info
+      - hostname-check
+      - dependency-check
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checking multiple dependency
-        run: sleep 20
+      - name: Execute Final Step
+        run: |
+          echo "All dependent jobs completed"
+          sleep 20
