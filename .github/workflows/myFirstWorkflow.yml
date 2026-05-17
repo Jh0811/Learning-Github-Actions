@@ -16,7 +16,7 @@ on:
 jobs:
 
   # =================================================
-  # JOB 1 - SYSTEM INFORMATION & ARTIFACT CREATION
+  # JOB 1 - SYSTEM INFO & ARTIFACT CREATION
   # =================================================
   system-info:
     name: System Information Job
@@ -25,14 +25,14 @@ jobs:
     steps:
 
       # ---------------------------------------------
-      # Step 1 - Basic System Information
+      # Step 1 - Display Runner Information
       # ---------------------------------------------
       - name: Display Runner Information
         run: |
           echo "Current Working Directory:"
           pwd
 
-          echo "Listing Files:"
+          echo "Directory Listing:"
           ls -ltr
 
           echo "Hostname:"
@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       # ---------------------------------------------
-      # Step 3 - Create Artifact Files
+      # Step 3 - Create Artifacts
       # ---------------------------------------------
       - name: Create Artifacts
         run: |
@@ -92,7 +92,7 @@ jobs:
             artifacts/
 
       # ---------------------------------------------
-      # Step 7 - Upload Artifacts With Exclusions
+      # Step 7 - Upload Filtered Artifacts
       # ---------------------------------------------
       - name: Upload Filtered Artifacts
         uses: actions/upload-artifact@v4
@@ -104,11 +104,11 @@ jobs:
             !**/hostname.txt
 
   # =================================================
-  # JOB 2 - DOWNLOAD & VERIFY ARTIFACTS
+  # JOB 2 - DOWNLOAD ARTIFACTS
+  # Depends on JOB 1
   # =================================================
   artifact-download:
     name: Artifact Download Job
-    needs: System Information Job
     runs-on: ubuntu-latest
     needs: system-info
 
@@ -132,7 +132,7 @@ jobs:
           name: single_file
 
       # ---------------------------------------------
-      # Step 3 - Verify Downloaded Files
+      # Step 3 - Verify Downloaded Artifact
       # ---------------------------------------------
       - name: Verify Downloaded Artifact
         run: |
@@ -140,11 +140,12 @@ jobs:
           pwd
           ls -ltr
 
-          echo "Displaying Artifact Content:"
+          echo "Artifact Content:"
           cat myartifact.txt
 
   # =================================================
-  # JOB 3 - DEPENDENCY TEST JOB
+  # JOB 3 - VALIDATE DEPENDENCIES
+  # Depends on JOB1 & JOB2
   # =================================================
   dependency-check:
     name: Dependency Validation Job
@@ -157,12 +158,13 @@ jobs:
 
       - name: Validate Dependency Execution
         run: |
-          echo "All dependent jobs completed successfully"
-          echo "Running validation checks..."
+          echo "JOB1 and JOB2 completed successfully"
+          echo "Running validation..."
           sleep 10
 
   # =================================================
-  # JOB 4 - FINAL EXECUTION JOB
+  # JOB 4 - FINAL EXECUTION
+  # Depends on All Previous Jobs
   # =================================================
   final-job:
     name: Final Workflow Job
@@ -176,6 +178,8 @@ jobs:
 
       - name: Final Execution Step
         run: |
-          echo "Workflow execution completed successfully"
-          echo "Final job is now running"
+          echo "All jobs completed successfully"
+          echo "Final workflow execution in progress"
+
+          echo "Execution Time:"
           date
