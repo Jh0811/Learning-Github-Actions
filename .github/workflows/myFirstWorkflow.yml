@@ -6,7 +6,7 @@ on:
 
   schedule:
     # Runs every 1 minute
-    - cron: "*/1 * * * *"
+    - cron: "*/5 * * * *"
 
 jobs:
 
