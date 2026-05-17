@@ -2,12 +2,6 @@ name: Scheduled Multi-Job Workflow
 
 # Workflow Triggers
 on:
-  
-
-  schedule:
-    # Runs every 1 minute
-    - cron: "*/5 * * * *"
-  workflow_dispatch: 
   push:
 
 jobs:
