@@ -14,62 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print Welcome Message
-        run: echo "This is my first GitHub Actions workflow"
-
-      - name: Display OS Release Information
-        run: cat /etc/os-release
-
-      - name: Wait for 20 Seconds
-        run: sleep 20
-
-  # -----------------------------------------
-  # JOB 2
-  # -----------------------------------------
-  hostname-check:
-    name: Hostname and Time Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Display Runner Hostname
-        run: hostname
-
-      - name: Execute Multiple Commands
+      - name: Step-1
         run: |
-          echo "Hi, This is Jhalsa"
-          echo "Current Time: $(date)"
-          sleep 20
-
-  # -----------------------------------------
-  # JOB 3
-  # Depends on JOB 1
-  # -----------------------------------------
-  dependency-check:
-    name: Single Dependency Job
-    needs: system-info
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Verify Dependency Execution
+        pwd
+        ls -ltr
+        hostname
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Step-3
         run: |
-          echo "JOB1 completed successfully"
-          sleep 10
+        pwd
+        ls -ltr
+        hostname
 
-  # -----------------------------------------
-  # JOB 4
-  # Depends on JOB 1, JOB 2, and JOB 3
-  # -----------------------------------------
-  final-job:
-    name: Multiple Dependency Job
-    needs:
-      - system-info
-      - hostname-check
-      - dependency-check
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Execute Final Step
-        run: |
-          echo "All dependent jobs completed"
-          sleep 20
+   
