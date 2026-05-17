@@ -108,6 +108,7 @@ jobs:
   # =================================================
   artifact-download:
     name: Artifact Download Job
+    needs: System Information Job
     runs-on: ubuntu-latest
     needs: system-info
 
