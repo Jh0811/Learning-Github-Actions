@@ -26,41 +26,39 @@ jobs:
 
       - name: Step-3
         run: |
-          echo "pwd" >> myarchifact.txt
-          mkdir archifacts
-          echo `ls -latr` >> archifacts/lists.txt
-          echo  `hostname` >> archifacts/hostname.txt
-      - name: Upload archifact
-        uses: actions/upload-artifact@v7.0.1
+          echo "pwd" >> myartifact.txt
+
+          mkdir artifacts
+
+          ls -latr >> artifacts/lists.txt
+
+          hostname >> artifacts/hostname.txt
+
+      - name: Upload Single Artifact
+        uses: actions/upload-artifact@v4
         with:
-           name: single_file
-           path: ./myarchifact.txt
-       - name: Upload archifact from directory
-        uses: actions/upload-artifact@v7.0.1
+          name: single_file
+          path: ./myartifact.txt
+
+      - name: Upload Artifact Directory
+        uses: actions/upload-artifact@v4
         with:
-           name: directory_archifacts
-           path: archifacts/   
-        - name: multiple archifacts
-        uses: actions/upload-artifact@v7.0.1
+          name: directory_artifacts
+          path: artifacts/
+
+      - name: Upload Multiple Artifacts
+        uses: actions/upload-artifact@v4
         with:
-           name: multiple
-           path: |
-             ./myarchifact.txt
-             archifacts/
-      - name: Upload archifact with exclusions
-        uses: actions/upload-artifact@v7.0.1
+          name: multiple_artifacts
+          path: |
+            ./myartifact.txt
+            artifacts/
+
+      - name: Upload Artifacts With Exclusions
+        uses: actions/upload-artifact@v4
         with:
-           name: single_file
-           path: |
-             ./myarchifact.txt
-             archifacts/
-             !**/hostname.txt
-
-
-
-
-
-
-
-
-
+          name: filtered_artifacts
+          path: |
+            ./myartifact.txt
+            artifacts/
+            !**/hostname.txt
