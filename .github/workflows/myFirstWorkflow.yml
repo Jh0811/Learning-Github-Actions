@@ -62,3 +62,37 @@ jobs:
             ./myartifact.txt
             artifacts/
             !**/hostname.txt
+ # -----------------------------------------
+  # JOB 2
+  # -----------------------------------------
+  system-info:
+    name: job2
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checking the current directory
+        run: |
+          pwd
+          ls -ltr
+          hostname
+
+      - name: Download single archifacts 
+        uses: actions/download-artifact@v3.1.0
+        with:
+           name: single_file
+       - name: Checking the current directory post download
+        run: |
+          pwd
+          ls -ltr
+          hostname
+
+
+
+
+
+
+
+
+
+        
