@@ -117,6 +117,8 @@ jobs:
       # ---------------------------------------------
       # Step 1 - Verify Current Directory
       # ---------------------------------------------
+      - name: Create custom folder
+        run: mkdir -p single_file
       - name: Verify Initial Directory
         run: |
           echo "Before Download"
@@ -130,6 +132,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: single_file
+          path: single_file
 
       # ---------------------------------------------
       # Step 3 - Verify Downloaded Artifact
@@ -138,7 +141,7 @@ jobs:
         run: |
           echo "After Download"
           pwd
-          ls -ltr
+          ls -ltr single_file
 
           echo "Artifact Content:"
           cat myartifact.txt
