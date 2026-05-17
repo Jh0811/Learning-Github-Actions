@@ -27,14 +27,34 @@ jobs:
       - name: Step-3
         run: |
           echo "pwd" >> myarchifact.txt
-          ls -latr
-          hostname
+          mkdir archifacts
+          echo `ls -latr` >> archifacts/lists.txt
+          echo  `hostname` >> archifacts/hostname.txt
       - name: Upload archifact
         uses: actions/upload-artifact@v7.0.1
         with:
            name: single_file
            path: ./myarchifact.txt
-          
+       - name: Upload archifact from directory
+        uses: actions/upload-artifact@v7.0.1
+        with:
+           name: directory_archifacts
+           path: archifacts/   
+        - name: multiple archifacts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+           name: multiple
+           path: |
+             ./myarchifact.txt
+             archifacts/
+      - name: Upload archifact with exclusions
+        uses: actions/upload-artifact@v7.0.1
+        with:
+           name: single_file
+           path: |
+             ./myarchifact.txt
+             archifacts/
+             !**/hostname.txt
 
 
 
