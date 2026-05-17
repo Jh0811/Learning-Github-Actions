@@ -143,8 +143,7 @@ jobs:
           pwd
           ls -ltr single_file
 
-          echo "Artifact Content:"
-          cat myartifact.txt
+          
 
   # =================================================
   # JOB 3 - VALIDATE DEPENDENCIES
