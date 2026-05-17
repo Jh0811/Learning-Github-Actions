@@ -14,17 +14,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Step-1
         run: |
-        pwd
-        ls -ltr
-        hostname
-      - name: Checkout
-        uses: actions/checkout@v6.0.2
+          pwd
+          ls -ltr
+          hostname
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Step-3
         run: |
-        pwd
-        ls -ltr
-        hostname
-
-   
+          pwd
+          ls -ltr
+          hostname
