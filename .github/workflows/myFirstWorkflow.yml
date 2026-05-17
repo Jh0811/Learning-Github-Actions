@@ -2,7 +2,7 @@ name: Scheduled Multi-Job Workflow
 
 # Workflow Triggers
 on:
-  push:
+  
 
   schedule:
     # Runs every 1 minute
