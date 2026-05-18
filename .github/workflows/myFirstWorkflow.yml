@@ -5,6 +5,10 @@ name: Advanced GitHub Actions Workflow
 # ---------------------------------------------------
 on:
   push:
+    branches:
+      - dev
+      - `features-*`
+      - main
 
   schedule:
     # Runs every 5 minutes
@@ -61,6 +65,9 @@ jobs:
 
           echo "Current Date and Time:" > artifacts/date.txt
           date >> artifacts/date.txt
+
+          echo "OS type:" > artifacts/os.txt
+          cat /etc/os-release >> artifacts/os.txt
 
       # ---------------------------------------------
       # Step 4 - Upload Single Artifact
