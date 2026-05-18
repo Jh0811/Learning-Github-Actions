@@ -205,6 +205,9 @@ jobs:
           echo "[INFO] Running deployment for $ENV_TYPE"
           echo "[INFO] Application User: $APP_USER"
           echo "[INFO] Application Port: $APP_PORT"
+       - name: Referring Repository Secrets
+        run: |
+          echo "[INFO] Running deployment for ${{secrets.APP_PASSWORD}}"   
 
   # =================================================
   # JOB 4 - FINAL EXECUTION
