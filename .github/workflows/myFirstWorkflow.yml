@@ -23,22 +23,22 @@ jobs:
 
     steps:
 
-      # Checkout repository code
+      # Checkout Repository
       - name: Checkout code
         uses: actions/checkout@v4
 
       # Setup Python
-      - name: Setup Python
+      - name: Python Setup
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # Install dependencies
+      # Install Dependencies
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Run unit tests
+      # Run Unit Tests
       - name: Run Unit Tests
         run: pytest -v
