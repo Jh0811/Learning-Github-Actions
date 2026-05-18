@@ -1,249 +1,66 @@
 name: Advanced GitHub Actions Workflow
 
-# ===================================================
-# WORKFLOW TRIGGERS
-# ===================================================
 on:
-
-  # Trigger workflow on push
   push:
-    branches:
-      - main
-      
-
-  # Trigger workflow on pull request
   pull_request:
-    branches:
-      - main
 
-  # Scheduled workflow
-  schedule:
-    # Runs every 5 minutes
-    - cron: "*/5 * * * *"
-
-# ===================================================
-# GLOBAL ENVIRONMENT VARIABLES
-# ===================================================
-env:
-  ENV_TYPE: DEV
-  APP_USER: thinkynx
-  APP_PORT: 80
-
-# ===================================================
-# JOB DEFINITIONS
-# ===================================================
 jobs:
-
-  # =================================================
-  # JOB 1 - SYSTEM INFORMATION & ARTIFACT CREATION
-  # =================================================
-  system-info:
-    name: System Information Job
+  unit-tests:
+    name: Running Unit Test Cases
     runs-on: ubuntu-latest
 
     steps:
-
-      # ---------------------------------------------
-      # Step 1 - Display Runner Information
-      # ---------------------------------------------
-      - name: Display Runner Information
-        run: |
-          echo "Current Working Directory:"
-          pwd
-          echo "Directory Listing:"
-          ls -ltr
-          echo "Hostname:"
-          hostname
-
-      # ---------------------------------------------
-      # Step 2 - Checkout Repository
-      # ---------------------------------------------
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # ---------------------------------------------
-      # Step 3 - Create Artifacts
-      # ---------------------------------------------
-      - name: Create Artifacts
-        run: |
-          echo "GitHub Actions Artifact Demo" > myartifact.txt
-          mkdir -p artifacts
-          echo "Directory Listing:" > artifacts/lists.txt
-          ls -latr >> artifacts/lists.txt
-          echo "Hostname Information:" > artifacts/hostname.txt
-          hostname >> artifacts/hostname.txt
-          echo "Current Date and Time:" > artifacts/date.txt
-          date >> artifacts/date.txt
-          echo "Operating System Information:" > artifacts/os.txt
-          cat /etc/os-release >> artifacts/os.txt
+      - name: Python Setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-      # ---------------------------------------------
-      # Step 4 - Upload Single Artifact
-      # ---------------------------------------------
-      - name: Upload Single Artifact
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: |
+          mkdir reports/
+          pytest --junitxml=reports/unit_test_report.xml --cov=./ --cov-report=xml:reports/coverage_report.xml
+
+      - name: Upload Unit Test Report
         uses: actions/upload-artifact@v4
         with:
-          name: single_file
-          path: myartifact.txt
+          name: unit-test-report
+          path: reports/
 
-      # ---------------------------------------------
-      # Step 5 - Upload Artifact Directory
-      # ---------------------------------------------
-      - name: Upload Artifact Directory
-        uses: actions/upload-artifact@v4
-        with:
-          name: directory_artifacts
-          path: artifacts/
-
-      # ---------------------------------------------
-      # Step 6 - Upload Multiple Artifacts
-      # ---------------------------------------------
-      - name: Upload Multiple Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: multiple_artifacts
-          path: |
-            myartifact.txt
-            artifacts/
-
-      # ---------------------------------------------
-      # Step 7 - Upload Filtered Artifacts
-      # ---------------------------------------------
-      - name: Upload Filtered Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: filtered_artifacts
-          path: |
-            myartifact.txt
-            artifacts/
-            !**/hostname.txt
-
-  # =================================================
-  # JOB 2 - DOWNLOAD ARTIFACTS
-  # Depends on JOB 1
-  # =================================================
-  artifact-download:
-    name: Artifact Download Job
-    runs-on: ubuntu-latest
-    needs: system-info
-
-    steps:
-
-      # ---------------------------------------------
-      # Step 1 - Create Download Directory
-      # ---------------------------------------------
-      - name: Create Custom Folder
-        run: mkdir -p single_file
-
-      # ---------------------------------------------
-      # Step 2 - Verify Initial Directory
-      # ---------------------------------------------
-      - name: Verify Initial Directory
-        run: |
-          echo "Before Download"
-          pwd
-          ls -ltr
-
-      # ---------------------------------------------
-      # Step 3 - Download Artifact
-      # ---------------------------------------------
-      - name: Download Single Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: single_file
-          path: single_file
-
-      # ---------------------------------------------
-      # Step 4 - Verify Downloaded Artifact
-      # ---------------------------------------------
-      - name: Verify Downloaded Artifact
-        run: |
-          echo "After Download"
-          pwd
-          echo "Downloaded Files:"
-          ls -ltr single_file
-          echo "Artifact Content:"
-          cat single_file/myartifact.txt
-
-  # =================================================
-  # JOB 3 - DEPENDENCY VALIDATION
-  # Depends on JOB1 & JOB2
-  # =================================================
-  dependency-check:
-    name: Dependency Validation Job
+  codeql:
+    name: CodeQL Security Scan
     runs-on: ubuntu-latest
 
-    needs:
-      - system-info
-      - artifact-download
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'python' ]
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # ---------------------------------------------
-      # Step 1 - Validate Dependencies
-      # ---------------------------------------------
-      - name: Validate Dependency Execution
-        run: |
-          echo "JOB1 and JOB2 completed successfully"
-          echo "Running validation checks..."
-          sleep 10
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
 
-      # ---------------------------------------------
-      # Step 2 - Display Environment Variables
-      # ---------------------------------------------
-      - name: Referring Environment Variables
-        run: |
-          echo "[INFO] Running deployment for $ENV_TYPE"
-          echo "[INFO] Application User: $APP_USER"
-          echo "[INFO] Application Port: $APP_PORT"
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
-      # ---------------------------------------------
-      # Step 3 - Referring Repository Secrets
-      # ---------------------------------------------
-      - name: Referring Repository Secrets
-        env:
-          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
-        run: |
-          echo "[INFO] Repository secret is configured successfully"
-          echo "[INFO] Secret length validation completed"
-
-  # =================================================
-  # JOB 4 - CONTEXT VARIABLES
-  # =================================================
-  job5:
-    name: Job5
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Referring Variables or Inbuilt Variables
-        run: |
-          echo "[INFO] Triggered by ${{ github.event_name }}"
-          echo "[INFO] New change is created by ${{ github.actor }} in ${{ github.ref_name }} branch"
-          echo "[INFO] Current step is running on ${{ runner.os }}"
-          echo "[INFO] Current workflow run ID is ${{ github.run_id }}"
-
-  # =================================================
-  # JOB 5 - FINAL EXECUTION
-  # Depends on ALL Previous Jobs
-  # =================================================
-  final-job:
-    name: Final Workflow Job
-    runs-on: ubuntu-latest
-
-    needs:
-      - system-info
-      - artifact-download
-      - dependency-check
-      - job5
-
-    steps:
-
-      # ---------------------------------------------
-      # Step 1 - Final Workflow Execution
-      # ---------------------------------------------
-      - name: Final Execution Step
-        run: |
-          echo "All jobs completed successfully"
-          echo "Final workflow execution in progress"
-          echo "Execution Time:"
-          date
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
