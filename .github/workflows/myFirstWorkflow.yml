@@ -27,37 +27,40 @@ jobs:
         run: |
           mkdir reports/
           pytest --junitxml=reports/unit_test_report.xml --cov=./ --cov-report=xml:reports/coverage_report.xml
+
       - name: Upload Unit Test Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: unit-test-report
           path: reports/
 
-
-codeql:
+  codeql:
     name: CodeQL Security Scan
     runs-on: ubuntu-latest
+
     permissions:
       actions: read
       contents: read
       security-events: write
+
     strategy:
       fail-fast: false
       matrix:
-        language: ['python']
+        language: [ 'python' ]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
+
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
-          category: 'security'
-        
-
-
+          category: "/language:${{ matrix.language }}"
