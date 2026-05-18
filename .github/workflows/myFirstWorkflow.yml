@@ -9,8 +9,7 @@ on:
   push:
     branches:
       - main
-      - dev
-      - 'feature-*'
+      
 
   # Trigger workflow on pull request
   pull_request:
@@ -51,10 +50,8 @@ jobs:
         run: |
           echo "Current Working Directory:"
           pwd
-
           echo "Directory Listing:"
           ls -ltr
-
           echo "Hostname:"
           hostname
 
@@ -70,18 +67,13 @@ jobs:
       - name: Create Artifacts
         run: |
           echo "GitHub Actions Artifact Demo" > myartifact.txt
-
           mkdir -p artifacts
-
           echo "Directory Listing:" > artifacts/lists.txt
           ls -latr >> artifacts/lists.txt
-
           echo "Hostname Information:" > artifacts/hostname.txt
           hostname >> artifacts/hostname.txt
-
           echo "Current Date and Time:" > artifacts/date.txt
           date >> artifacts/date.txt
-
           echo "Operating System Information:" > artifacts/os.txt
           cat /etc/os-release >> artifacts/os.txt
 
@@ -167,12 +159,9 @@ jobs:
       - name: Verify Downloaded Artifact
         run: |
           echo "After Download"
-
           pwd
-
           echo "Downloaded Files:"
           ls -ltr single_file
-
           echo "Artifact Content:"
           cat single_file/myartifact.txt
 
@@ -196,9 +185,7 @@ jobs:
       - name: Validate Dependency Execution
         run: |
           echo "JOB1 and JOB2 completed successfully"
-
           echo "Running validation checks..."
-
           sleep 10
 
       # ---------------------------------------------
@@ -207,9 +194,7 @@ jobs:
       - name: Referring Environment Variables
         run: |
           echo "[INFO] Running deployment for $ENV_TYPE"
-
           echo "[INFO] Application User: $APP_USER"
-
           echo "[INFO] Application Port: $APP_PORT"
 
       # ---------------------------------------------
@@ -220,20 +205,25 @@ jobs:
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
         run: |
           echo "[INFO] Repository secret is configured successfully"
-
           echo "[INFO] Secret length validation completed"
-   job5:
+
+  # =================================================
+  # JOB 4 - CONTEXT VARIABLES
+  # =================================================
+  job5:
     name: Job5
     runs-on: ubuntu-latest
+
     steps:
-      - name: Referring variables or inbuit variables
+      - name: Referring Variables or Inbuilt Variables
         run: |
-          echo "[INFO] Triggered by ${{github.event_name }}"
-          echo "[INFO] New change is created by  ${{github.actor }} in ${{github.ref_name}} branch"
-          echo "[INFO] Current step is running on ${{runners.os }}"
-          echo "[INFO] Current job is running on  ${{job.check_run_id }}"
+          echo "[INFO] Triggered by ${{ github.event_name }}"
+          echo "[INFO] New change is created by ${{ github.actor }} in ${{ github.ref_name }} branch"
+          echo "[INFO] Current step is running on ${{ runner.os }}"
+          echo "[INFO] Current workflow run ID is ${{ github.run_id }}"
+
   # =================================================
-  # JOB 4 - FINAL EXECUTION
+  # JOB 5 - FINAL EXECUTION
   # Depends on ALL Previous Jobs
   # =================================================
   final-job:
@@ -244,6 +234,7 @@ jobs:
       - system-info
       - artifact-download
       - dependency-check
+      - job5
 
     steps:
 
@@ -253,8 +244,6 @@ jobs:
       - name: Final Execution Step
         run: |
           echo "All jobs completed successfully"
-
           echo "Final workflow execution in progress"
-
           echo "Execution Time:"
           date
