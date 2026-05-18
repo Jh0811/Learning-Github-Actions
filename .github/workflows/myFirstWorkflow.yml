@@ -6,8 +6,6 @@ name: Advanced GitHub Actions Workflow
 on:
   push:
     branches:
-      - dev
-      - 'features-*'
       - main
 
   pull_request:
