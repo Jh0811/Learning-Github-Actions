@@ -222,7 +222,16 @@ jobs:
           echo "[INFO] Repository secret is configured successfully"
 
           echo "[INFO] Secret length validation completed"
-
+   job5:
+    name: Job5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Referring variables or inbuit variables
+        run: |
+          echo "[INFO] Triggered by ${{github.event_name }}"
+          echo "[INFO] New change is created by  ${{github.actor }} in ${{github.ref_name}} branch"
+          echo "[INFO] Current step is running on ${{runners.os }}"
+          echo "[INFO] Current job is running on  ${{job.check_run_id }}"
   # =================================================
   # JOB 4 - FINAL EXECUTION
   # Depends on ALL Previous Jobs
